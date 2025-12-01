@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  api:
+    build: ./backend
+    container_name: intervu_api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+    restart: unless-stopped
+    volumes:
+      - ./backend:/app     
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/intervu
+      - JWT_SECRET=supersecretkey
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+  mongo:
+    image: mongo:7
+    container_name: intervu_mongo
+    environment:
+      MONGO_INITDB_DATABASE: intervu
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
